@@ -1,3 +1,4 @@
+// src/caseStudyTemplate.jsx
 import React, { useState } from "react";
 
 export default function CaseStudyTemplate({ title, caseText, dataTable, questions }) {

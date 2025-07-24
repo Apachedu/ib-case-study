@@ -1,7 +1,8 @@
+// src/CaseStudyDashboard.jsx
 import React, { useState } from 'react';
-import { useCaseStudies } from './firebaseConfig';
-import { CaseStudyForm } from './firebaseConfig';
-import { CaseStudyList } from './firebaseConfig';
+import { useCaseStudies } from './useCaseStudies';
+import { CaseStudyForm } from './firebaseConfig.jsx';
+import CaseStudyList from './CaseStudyList.jsx';
 
 const CaseStudyDashboard = () => {
   const { caseStudies, loading } = useCaseStudies();

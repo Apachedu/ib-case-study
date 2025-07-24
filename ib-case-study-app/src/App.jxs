@@ -1,0 +1,20 @@
+// src/App.jsx
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import LoginForm from './LoginForm.jsx';
+import CaseStudyDashboard from './CaseStudyDashboard.jsx';
+import CaseStudyPage from './CaseStudyPage.jsx';
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LoginForm />} />
+        <Route path="/firestore-admin" element={<CaseStudyDashboard />} />
+        <Route path="/case/:id" element={<CaseStudyPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;
