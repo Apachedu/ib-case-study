@@ -1,60 +1,12 @@
-// src/firebaseConfig.jsx
 import React, { useState, useEffect } from 'react';
-import { initializeApp } from 'firebase/app';
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  addDoc,
-  doc,
-  updateDoc
-} from 'firebase/firestore';
 
-// Firebase configs for multiple projects
-const firebaseConfigs = {
-  main: {
-    apiKey: "AIzaSyAxns05_hEcEIoh-qmjO1ksVJjdvRDP7n0",
-    authDomain: "ibcasestudies-1784e.firebaseapp.com",
-    projectId: "ibcasestudies-1784e",
-    storageBucket: "ibcasestudies-1784e.appspot.com",
-    messagingSenderId: "547857666534",
-    appId: "1:547857666534:web:0970ef90482e387b3bc627",
-    measurementId: "G-8V4WGJD9HT"
-  },
-  webinar: {
-    apiKey: "AIzaSyB4_scj4_g2c7x3oojobMBuoGJK4Vl6wMo",
-    authDomain: "ibcasestudies-webinar.firebaseapp.com",
-    projectId: "ibcasestudies-webinar",
-    storageBucket: "ibcasestudies-webinar.firebasestorage.app",
-    messagingSenderId: "401140167731",
-    appId: "1:401140167731:web:c72788200c30da79951f46"
-  }
+const brandColors = {
+  primary: 'text-blue-600',
+  buttonBg: 'bg-blue-600',
+  buttonHover: 'hover:bg-blue-700',
 };
 
-// Switch active Firebase project here:
-const ACTIVE_CONFIG = firebaseConfigs.main; // or firebaseConfigs.webinar
-
-// Initialize Firebase
-const app = initializeApp(ACTIVE_CONFIG);
-const db = getFirestore(app);
-
-// Fetch case studies from Firestore
-export async function getCaseStudies() {
-  try {
-    const querySnapshot = await getDocs(collection(db, "caseStudies"));
-    const studies = [];
-    querySnapshot.forEach(docSnap => {
-      studies.push({ id: docSnap.id, ...docSnap.data() });
-    });
-    return studies;
-  } catch (error) {
-    console.error("Error fetching case studies:", error);
-    return [];
-  }
-}
-
-// Form component to add/update case studies
-export function CaseStudyForm({ selectedCase, refresh }) {
+export const CaseStudyForm = ({ selectedCase, refresh }) => {
   const [formData, setFormData] = useState({
     title: '',
     level: 'SL',
@@ -63,7 +15,7 @@ export function CaseStudyForm({ selectedCase, refresh }) {
     toolkit: '',
     caseText: '',
     dataTable: '',
-    questions: ''
+    questions: '',
   });
 
   useEffect(() => {
@@ -75,8 +27,8 @@ export function CaseStudyForm({ selectedCase, refresh }) {
         module: selectedCase.module || '',
         toolkit: (selectedCase.toolkit || []).join(', '),
         caseText: selectedCase.caseText || '',
-        dataTable: selectedCase.dataTable ? JSON.stringify(selectedCase.dataTable, null, 2) : '',
-        questions: selectedCase.questions ? JSON.stringify(selectedCase.questions, null, 2) : ''
+        dataTable: JSON.stringify(selectedCase.dataTable || [], null, 2),
+        questions: JSON.stringify(selectedCase.questions || [], null, 2),
       });
     } else {
       setFormData({
@@ -87,7 +39,7 @@ export function CaseStudyForm({ selectedCase, refresh }) {
         toolkit: '',
         caseText: '',
         dataTable: '',
-        questions: ''
+        questions: '',
       });
     }
   }, [selectedCase]);
@@ -97,52 +49,34 @@ export function CaseStudyForm({ selectedCase, refresh }) {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-
     try {
-      const dataToSave = {
+      const newCase = {
         ...formData,
-        toolkit: formData.toolkit.split(',').map(item => item.trim()),
+        toolkit: formData.toolkit.split(',').map(s => s.trim()),
         dataTable: JSON.parse(formData.dataTable),
-        questions: JSON.parse(formData.questions)
+        questions: JSON.parse(formData.questions),
       };
-
-      if (selectedCase && selectedCase.id) {
-        const docRef = doc(db, "caseStudies", selectedCase.id);
-        await updateDoc(docRef, dataToSave);
-      } else {
-        await addDoc(collection(db, "caseStudies"), dataToSave);
-      }
-
-      alert('Case study saved successfully!');
-      setFormData({
-        title: '',
-        level: 'SL',
-        topic: '',
-        module: '',
-        toolkit: '',
-        caseText: '',
-        dataTable: '',
-        questions: ''
-      });
+      // TODO: save to Firebase or backend here
+      alert('Case study saved! (Simulated)');
       refresh();
-    } catch (error) {
-      alert('Error saving case study: ' + error.message);
+    } catch (err) {
+      alert('Invalid JSON in data table or questions. Please fix.');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 p-6 bg-white rounded shadow max-w-4xl mx-auto">
-      <h2 className="text-xl font-bold text-blue-700 mb-4">Add / Edit Case Study</h2>
-
+    <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded shadow-lg max-w-4xl mx-auto">
+      <h2 className={`text-xl font-bold mb-4 ${brandColors.primary}`}>Add / Edit Case Study</h2>
+      
       <input
         name="title"
         value={formData.title}
         onChange={handleChange}
         placeholder="Title"
-        required
         className="w-full border rounded px-3 py-2"
+        required
       />
 
       <select
@@ -213,10 +147,10 @@ export function CaseStudyForm({ selectedCase, refresh }) {
 
       <button
         type="submit"
-        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded transition"
+        className={`${brandColors.buttonBg} ${brandColors.buttonHover} text-white font-semibold px-6 py-2 rounded transition`}
       >
         Save Case Study
       </button>
     </form>
   );
-}
+};
