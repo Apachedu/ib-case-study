@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Custom Styles */
+
+.app {
+  @apply p-5 bg-gray-100 font-sans;
+}
+
+.case-study {
+  @apply bg-white rounded-lg p-5 mb-8 shadow-md;
+}
+
+.section {
+  @apply mt-5 pt-3 border-t border-gray-300;
+}
+
+.badge {
+  @apply bg-blue-600 text-white px-2 py-0.5 rounded-full text-xs ml-2;
+}
+
+.marks {
+  @apply font-bold ml-3 text-gray-600;
+}
+
+textarea {
+  @apply w-full p-2 mt-2 text-base rounded border border-gray-300 resize-y;
+}
+
+button {
+  @apply mt-2 bg-green-600 text-white py-2 px-4 rounded cursor-pointer;
+}
+
+button:hover {
+  @apply bg-green-700;
+}
+
+.feedback {
+  @apply mt-3 p-3 bg-blue-100 border-l-4 border-blue-600 rounded;
+}
+
+.filter-bar {
+  @apply flex gap-3 mb-5 items-center;
+}
+
+.filter-bar input,
+.filter-bar select {
+  @apply p-2 text-base;
+}

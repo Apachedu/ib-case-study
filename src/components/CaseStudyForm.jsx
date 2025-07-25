@@ -1,0 +1,171 @@
+import React, { useState, useEffect } from 'react';
+
+const brandColors = {
+  primary: 'text-blue-700',
+  buttonBg: 'bg-blue-700',
+  buttonHover: 'hover:bg-blue-800',
+};
+
+const CaseStudyForm = ({ selectedCase, refresh }) => {
+  const [formData, setFormData] = useState({
+    title: '',
+    level: 'SL',
+    topic: '',
+    module: '',
+    toolkit: '',
+    caseText: '',
+    dataTable: '',
+    questions: '',
+  });
+
+  useEffect(() => {
+    if (selectedCase) {
+      setFormData({
+        title: selectedCase.title || '',
+        level: selectedCase.level || 'SL',
+        topic: selectedCase.topic || '',
+        module: selectedCase.module || '',
+        toolkit: (selectedCase.toolkit || []).join(', '),
+        caseText: selectedCase.caseText || '',
+        dataTable: selectedCase.dataTable
+          ? JSON.stringify(selectedCase.dataTable, null, 2)
+          : '',
+        questions: selectedCase.questions
+          ? JSON.stringify(selectedCase.questions, null, 2)
+          : '',
+      });
+    } else {
+      setFormData({
+        title: '',
+        level: 'SL',
+        topic: '',
+        module: '',
+        toolkit: '',
+        caseText: '',
+        dataTable: '',
+        questions: '',
+      });
+    }
+  }, [selectedCase]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    try {
+      const newCase = {
+        ...formData,
+        toolkit: formData.toolkit.split(',').map((s) => s.trim()),
+        dataTable: JSON.parse(formData.dataTable),
+        questions: JSON.parse(formData.questions),
+      };
+      // TODO: Save to Firebase or backend here
+      alert('Case study saved! (Simulated)');
+      refresh();
+    } catch (err) {
+      alert('Invalid JSON in data table or questions. Please fix.');
+    }
+  };
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md space-y-6"
+    >
+      <h2 className={`text-2xl font-bold mb-4 ${brandColors.primary}`}>
+        Add / Edit Case Study
+      </h2>
+
+      <input
+        type="text"
+        name="title"
+        value={formData.title}
+        onChange={handleChange}
+        placeholder="Title"
+        className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        required
+      />
+
+      <select
+        name="level"
+        value={formData.level}
+        onChange={handleChange}
+        className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      >
+        <option value="SL">SL</option>
+        <option value="HL">HL</option>
+        <option value="SL/HL">SL/HL</option>
+      </select>
+
+      <input
+        type="text"
+        name="topic"
+        value={formData.topic}
+        onChange={handleChange}
+        placeholder="Topic"
+        className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        required
+      />
+
+      <input
+        type="text"
+        name="module"
+        value={formData.module}
+        onChange={handleChange}
+        placeholder="Module"
+        className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      />
+
+      <input
+        type="text"
+        name="toolkit"
+        value={formData.toolkit}
+        onChange={handleChange}
+        placeholder="Toolkit (comma-separated)"
+        className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      />
+
+      <textarea
+        name="caseText"
+        value={formData.caseText}
+        onChange={handleChange}
+        placeholder="Case Text"
+        rows={6}
+        className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-y"
+        required
+      />
+
+      <textarea
+        name="dataTable"
+        value={formData.dataTable}
+        onChange={handleChange}
+        placeholder="Data Table (JSON format)"
+        rows={6}
+        className="w-full border rounded px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 resize-y"
+        required
+      />
+
+      <textarea
+        name="questions"
+        value={formData.questions}
+        onChange={handleChange}
+        placeholder="Questions (JSON format with id, text, marks, banding, sampleAnswer)"
+        rows={8}
+        className="w-full border rounded px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 resize-y"
+        required
+      />
+
+      <button
+        type="submit"
+        className={`${brandColors.buttonBg} ${brandColors.buttonHover} text-white font-semibold px-6 py-2 rounded transition`}
+      >
+        Save Case Study
+      </button>
+    </form>
+  );
+};
+
+export default CaseStudyForm;
