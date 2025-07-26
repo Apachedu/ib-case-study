@@ -33,12 +33,12 @@ export const caseStudies = [
         id: "q1",
         text: "Evaluate the effectiveness of Saudi Arabia’s fiscal policy in reducing unemployment.",
         commandTerm: "Evaluate",
-        marks: 10,
+        marks: 7,
         level: "SL/HL",
         banding: [
-          "1–4: Basic knowledge of fiscal policy with limited analysis.",
-          "5–7: Reasonable application of theory to the Saudi context, some balance.",
-          "8–10: Strong analysis, well-supported evaluation, includes limitations and counterarguments."
+          "1–3: Basic knowledge of fiscal policy with limited analysis.",
+          "4–6: Reasonable application of theory to the Saudi context, some balance.",
+          "7–7: Strong analysis, well-supported evaluation, includes limitations and counterarguments."
         ],
         sampleAnswer: "The increased government spending could shift AD rightward, reducing cyclical unemployment. However, structural issues in the Saudi labour market and oil price volatility may limit long-term success. Multiplier effects depend on consumer confidence and import leakages."
       },
@@ -51,7 +51,7 @@ export const caseStudies = [
         banding: [
           "1–2: Vague reference to government spending and employment.",
           "3–4: Moderate explanation of AD and demand-deficient unemployment.",
-          "5–6: Clear chain of reasoning including fiscal tools and AD/AS framework."
+          "5–7: Clear chain of reasoning including fiscal tools and AD/AS framework."
         ],
         sampleAnswer: "By increasing government spending, aggregate demand rises. This prompts firms to hire more workers, reducing cyclical unemployment caused by weak demand."
       }
@@ -92,7 +92,7 @@ export const caseStudies = [
         id: "q1",
         text: "Analyse the impact of Equity Academy’s decentralised structure on its decision-making.",
         commandTerm: "Analyse",
-        marks: 10,
+        marks: 7,
         level: "HL Only",
         banding: [
           "1–4: Identifies structure with vague impact on decisions.",
@@ -151,7 +151,7 @@ export const caseStudies = [
         id: "q1",
         text: "Discuss the factors Amul should consider before changing its pricing strategy in international markets.",
         commandTerm: "Discuss",
-        marks: 10,
+        marks: 7,
         level: "SL/HL",
         banding: [
           "1–4: Lists generic factors with minimal link to Amul.",

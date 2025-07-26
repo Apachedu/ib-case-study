@@ -1,45 +1,39 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useCaseStudies } from './useCaseStudies';
-import SkillNestLogo from './assets/SkillNestLogo.png'; // Make sure path is correct
+import SkillNestLogo from './assets/SkillNestLogo.png';
 
 const HomePage = () => {
   const { caseStudies, loading } = useCaseStudies();
 
-  if (loading)
-    return <p className="p-6 text-center text-gray-500">Loading case studies...</p>;
+  if (loading) return <p className="text-center text-gray-400 mt-10">Loading case studies...</p>;
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
-      {/* Header with logo */}
-      <header className="flex items-center space-x-4 mb-10">
-        <img src={SkillNestLogo} alt="SkillNest Logo" className="h-12" />
-        <h1 className="text-4xl font-extrabold text-blue-700">IB Business Case Studies</h1>
+    <div className="max-w-6xl mx-auto px-6 py-10 font-sans">
+      {/* Header */}
+      <header className="flex items-center justify-between mb-10">
+        <div className="flex items-center space-x-4">
+          <img src={SkillNestLogo} alt="SkillNest Logo" className="h-10" />
+          <h1 className="text-3xl font-bold text-brandBlue">SkillNest IB Business</h1>
+        </div>
       </header>
 
-      {/* List of case studies */}
-      <ul>
-        {caseStudies.map((cs) => (
-          <li
+      {/* Case Study List */}
+      <div className="grid md:grid-cols-2 gap-6">
+        {caseStudies.map(cs => (
+          <Link
             key={cs.id}
-            className="mb-6 p-6 rounded-lg shadow-md hover:shadow-lg transition cursor-pointer bg-white"
+            to={`/case/${cs.id}`}
+            className="p-6 bg-white rounded-xl border shadow hover:shadow-lg transition"
           >
-            <Link
-              to={`/case/${cs.id}`}
-              className="font-semibold text-2xl text-blue-600 hover:underline"
-            >
-              {cs.title}
-            </Link>
-            <p className="mt-1 text-gray-600 text-lg">
-              {cs.topic} — <span className="italic">{cs.level}</span>
-            </p>
-          </li>
+            <h2 className="text-xl font-semibold text-brandBlue">{cs.title}</h2>
+            <p className="text-gray-600">{cs.topic} — <span className="italic">{cs.level}</span></p>
+          </Link>
         ))}
-      </ul>
+      </div>
 
-      {/* Footer copyright */}
-      <footer className="mt-12 text-center text-gray-400 text-sm">
-        &copy; 2025 SkillNestEdu. All rights reserved. © All case studies copyright protected.
+      <footer className="text-center mt-12 text-sm text-gray-400">
+        &copy; 2025 SkillNestEdu. All rights reserved.
       </footer>
     </div>
   );

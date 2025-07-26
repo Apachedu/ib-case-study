@@ -1,31 +1,57 @@
-// src/CaseStudyPage.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { caseStudies } from './caseStudies.js';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from './firebase';
+
+const TABS = ['Overview', 'Data', 'Questions'];
 
 const CaseStudyPage = () => {
   const { id } = useParams();
-  const selected = caseStudies.find(cs => cs.id === id);
-
+  const [caseStudy, setCaseStudy] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState(TABS[0]);
   const [responses, setResponses] = useState({});
   const [feedback, setFeedback] = useState({});
   const [showHelp, setShowHelp] = useState(true);
   const [submitted, setSubmitted] = useState(false);
 
-  if (!selected) return <p className="p-6 text-red-600">Case study not found.</p>;
+  useEffect(() => {
+    const fetchStudy = async () => {
+      try {
+        const docRef = doc(db, 'caseStudies', id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setCaseStudy(docSnap.data());
+        } else {
+          console.error('No such case study!');
+        }
+      } catch (error) {
+        console.error('Error loading case study:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStudy();
+  }, [id]);
+
+  if (loading) return <p className="p-6">Loading...</p>;
+  if (!caseStudy) return <p className="p-6 text-red-600">Case study not found.</p>;
 
   const handleChange = (qId, val) => {
     setResponses(prev => ({ ...prev, [qId]: val }));
   };
 
   const handleSubmit = () => {
-    // Simulate feedback logic or call your backend here
     const newFeedback = {};
-    selected.questions.forEach(q => {
+    caseStudy.questions.forEach(q => {
       if (!responses[q.id] || responses[q.id].trim() === '') {
         newFeedback[q.id] = '❌ Please provide an answer.';
       } else {
-        newFeedback[q.id] = `✅ Good start! Remember to include: ${q.sampleAnswer.substring(0, 80)}...`;
+        const bandDescriptors = q.banding
+          ? q.banding.map(desc => `• ${desc}`).join('\n')
+          : '';
+        newFeedback[q.id] = `✅ Good start! Include: ${q.sampleAnswer.substring(0, 80)}...\n\nBand descriptors:\n${bandDescriptors}`;
       }
     });
     setFeedback(newFeedback);
@@ -33,91 +59,89 @@ const CaseStudyPage = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-6 font-sans text-gray-900">
-      {/* Title */}
-      <h1 className="text-3xl font-extrabold text-blue-700">{selected.title}</h1>
+    <div className="max-w-4xl mx-auto p-8">
+      <h1 className="text-4xl font-extrabold text-blue-700 mb-6">{caseStudy.title}</h1>
 
-      {/* Case Text as paragraphs */}
-      <section>
-        <h2 className="text-xl font-semibold mb-2">Case Study Overview</h2>
-        {selected.caseText.split('\n').map((para, idx) => (
-          <p key={idx} className="mb-4 leading-relaxed">{para.trim()}</p>
+      {/* Tabs */}
+      <nav className="flex space-x-4 border-b border-blue-300 mb-6">
+        {TABS.map(t => (
+          <button
+            key={t}
+            onClick={() => setTab(t)}
+            className={`py-2 px-4 font-semibold ${tab === t ? 'border-b-4 border-blue-600 text-blue-600' : 'text-gray-500'}`}
+          >
+            {t}
+          </button>
         ))}
-      </section>
+      </nav>
 
-      {/* Data Table as simple bullet points */}
-      <section>
-        <h2 className="text-xl font-semibold mb-2">Key Data</h2>
-        <ul className="list-disc pl-5 space-y-1 text-gray-700">
-          {selected.dataTable.map((item, idx) => (
-            <li key={idx}>
-              <strong>{item.label}:</strong> {item.value}
-            </li>
+      {/* Tab Content */}
+      {tab === 'Overview' && (
+        <section className="space-y-4 text-lg">
+          {caseStudy.caseText?.map((para, idx) => (
+            <p key={idx}>{para}</p>
           ))}
-        </ul>
-      </section>
-
-      {/* Help toggle */}
-      <button
-        onClick={() => setShowHelp(!showHelp)}
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-      >
-        {showHelp ? 'Hide Help Tips' : 'Show Help Tips'}
-      </button>
-
-      {/* Questions */}
-      <section className="space-y-8">
-        {selected.questions.map(q => (
-          <div key={q.id} className="border border-gray-300 rounded-lg p-4 bg-blue-50">
-            <p className="font-semibold text-lg mb-2">
-              {q.text} <span className="text-sm text-gray-600">({q.marks} marks)</span>
-            </p>
-            <textarea
-              rows={q.marks >= 10 ? 8 : 4}
-              className="w-full border border-gray-400 rounded p-2 resize-y"
-              value={responses[q.id] || ''}
-              onChange={e => handleChange(q.id, e.target.value)}
-              disabled={submitted}
-            />
-
-            {/* Conditional Help */}
-            {showHelp && (
-              <div className="mt-2 bg-white border-l-4 border-blue-600 p-3 text-sm text-gray-800 whitespace-pre-line">
-                <strong>Hint:</strong> {q.sampleAnswer}
-                <br />
-                <em>Band descriptors:</em>
-                <ul className="list-disc list-inside">
-                  {q.banding.map((desc, i) => (
-                    <li key={i}>{desc}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Feedback after submit */}
-            {submitted && feedback[q.id] && (
-              <div className="mt-3 bg-yellow-100 border-l-4 border-yellow-400 p-3 text-sm whitespace-pre-line">
-                <strong>Feedback:</strong> {feedback[q.id]}
-              </div>
-            )}
-          </div>
-        ))}
-      </section>
-
-      {/* Submit Button */}
-      {!submitted && (
-        <button
-          onClick={handleSubmit}
-          className="mt-6 px-6 py-3 bg-green-600 text-white font-semibold rounded hover:bg-green-700 transition"
-        >
-          Submit Answers
-        </button>
+        </section>
       )}
 
-      {/* Citation & copyright */}
-      <footer className="mt-10 text-xs text-gray-500 italic">
-        <p>Sources cited as per IB requirements. © All case study content copyright protected.</p>
-      </footer>
+      {tab === 'Data' && (
+        <section className="font-mono text-base">
+          <h2 className="font-bold mb-3">Data Table</h2>
+          <ul className="list-disc list-inside">
+            {caseStudy.dataTable?.map((d, idx) => (
+              <li key={idx}><strong>{d.label}:</strong> {d.value}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {tab === 'Questions' && (
+        <section className="space-y-8">
+          <button
+            onClick={() => setShowHelp(!showHelp)}
+            className="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            {showHelp ? 'Hide Help' : 'Show Help'}
+          </button>
+
+          {caseStudy.questions.map(q => (
+            <div key={q.id} className="p-4 bg-blue-50 rounded border border-blue-200">
+              <p className="font-bold text-lg mb-2">{q.text} ({q.marks} marks)</p>
+              <textarea
+                rows={q.marks >= 10 ? 8 : 4}
+                value={responses[q.id] || ''}
+                onChange={(e) => handleChange(q.id, e.target.value)}
+                className="w-full p-3 border border-blue-300 rounded"
+                disabled={submitted}
+              />
+              {showHelp && (
+                <div className="mt-3 text-blue-800 text-sm bg-white p-3 rounded border border-blue-200">
+                  <strong>Hint:</strong> {q.sampleAnswer}
+                  <ul className="list-disc ml-6 mt-2">
+                    {q.banding.map((b, i) => (
+                      <li key={i}>{b}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {submitted && feedback[q.id] && (
+                <div className="mt-4 bg-yellow-100 p-3 border-l-4 border-yellow-500 rounded">
+                  <strong>Feedback:</strong> {feedback[q.id]}
+                </div>
+              )}
+            </div>
+          ))}
+
+          {!submitted && (
+            <button
+              onClick={handleSubmit}
+              className="mt-6 px-6 py-3 bg-green-600 text-white rounded hover:bg-green-700"
+            >
+              Submit Answers
+            </button>
+          )}
+        </section>
+      )}
     </div>
   );
 };

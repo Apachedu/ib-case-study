@@ -1,24 +1,21 @@
-// src/App.jsx
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import HomePage from './HomePage.jsx';
-import LoginForm from './LoginForm.jsx';
-import CaseStudyDashboard from './CaseStudyDashboard.jsx';
-import CaseStudyPage from './CaseStudyPage.jsx';
-import AdminPanel from './AdminPanel.jsx'; // import your AdminPanel
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-function App() {
+import HomePage from './HomePage';
+import CaseStudyPage from './CaseStudyPage';
+import AdminPanel from './AdminPanel';
+
+const App = () => {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginForm />} />
-        <Route path="/firestore-admin" element={<CaseStudyDashboard />} />
         <Route path="/case/:id" element={<CaseStudyPage />} />
-        <Route path="/admin" element={<AdminPanel />} /> {/* New admin route */}
+        <Route path="/admin" element={<AdminPanel />} />
+        <Route path="*" element={<p className="p-10 text-center text-red-500">Page not found</p>} />
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
-}
+};
 
 export default App;

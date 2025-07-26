@@ -1,79 +1,90 @@
-// src/caseStudyTemplate.jsx
-import React, { useState } from "react";
+import React, { useState } from 'react';
+
+const brand = {
+  text: 'text-brandBlue',
+  bgLight: 'bg-blue-50',
+  button: 'bg-brandGreen hover:bg-green-700',
+  border: 'border-brandBlue',
+};
 
 export default function CaseStudyTemplate({ title, caseText, dataTable, questions }) {
+  const [help, setHelp] = useState(false);
   const [responses, setResponses] = useState({});
   const [feedback, setFeedback] = useState({});
 
-  const feedbackTemplates = {
-    "6m": `
-✅ Aim for mid-to-high level responses (markband 4–6):
-- Define command terms.
-- Use one key business tool (e.g., break-even, ratio, PED).
-- Apply context-specific data.
-- Basic balance of pros/cons.
-- End with a short justification.
-    `,
-    "10m": `
-✅ Aim for top-band answers (markband 7–10):
-- Define all key terms.
-- Use at least one business tool (SWOT, Ansoff, STEEPLE).
-- Analyze short- and long-term impacts.
-- Justify with case data or examples.
-- Conclusion must be balanced and supported.
-    `
-  };
+  const handleToggleHelp = () => setHelp(!help);
 
   const handleChange = (id, value) => {
-    setResponses({ ...responses, [id]: value });
+    setResponses(prev => ({ ...prev, [id]: value }));
   };
 
-  const evaluateResponse = (id, type) => {
-    const answer = responses[id] || "";
-    let fb = "";
-    if (!answer.trim()) {
-      fb = "❌ Please write a response before checking.";
+  const handleFeedback = (id, marks, sample) => {
+    const val = responses[id]?.trim();
+    if (!val) {
+      setFeedback(prev => ({ ...prev, [id]: '❌ Please enter a response before checking.' }));
     } else {
-      fb = feedbackTemplates[type] || "✅ General structure is okay. Include IB markband elements.";
+      setFeedback(prev => ({
+        ...prev,
+        [id]: `✅ Model Insight: ${sample.substring(0, 100)}...
+
+Markband Guidance:
+- Band 5: Some analysis, little application.
+- Band 6: Good structure, some evaluation.
+- Band 7: Strong application + evaluation.`,
+      }));
     }
-    setFeedback({ ...feedback, [id]: fb });
   };
 
   return (
-    <div className="space-y-6 p-6">
-      <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
+    <div className="max-w-5xl mx-auto px-6 py-8 font-sans">
+      <h1 className={`text-3xl font-bold mb-6 ${brand.text}`}>{title}</h1>
 
-      <div className="bg-white p-4 border rounded shadow">
-        <h3 className="text-lg font-semibold">📖 Case Study:</h3>
-        <p className="text-gray-700 whitespace-pre-line">{caseText}</p>
-      </div>
+      <section className="bg-white p-5 rounded shadow mb-8 text-lg leading-relaxed whitespace-pre-wrap">
+        {caseText}
+      </section>
 
       {dataTable && (
-        <div className="bg-gray-50 p-4 border rounded shadow">
-          <h3 className="text-lg font-semibold mb-2">📊 Data:</h3>
-          <pre className="text-sm text-gray-800 whitespace-pre-wrap">{dataTable}</pre>
-        </div>
+        <section className="bg-gray-50 p-4 mb-8 rounded border text-sm font-mono">
+          <strong>Data Table:</strong>
+          <pre>{dataTable}</pre>
+        </section>
       )}
 
-      {questions.map(({ id, text, marks, type }) => (
-        <div key={id} className="bg-blue-50 p-4 border rounded-xl shadow space-y-2">
-          <label className="font-medium text-gray-700 block">
+      <button
+        className={`${brand.button} text-white font-semibold px-4 py-2 rounded mb-8`}
+        onClick={handleToggleHelp}
+      >
+        {help ? 'Hide Help' : 'Show Help'}
+      </button>
+
+      {questions.map(({ id, text, marks, sampleAnswer }) => (
+        <div key={id} className={`${brand.bgLight} p-6 mb-8 rounded border ${brand.border}`}>
+          <label className="block font-semibold text-lg mb-2">
             {text} <span className="text-sm text-gray-500">({marks} marks)</span>
           </label>
+
+          {help && (
+            <div className="bg-white border-l-4 border-blue-300 p-4 mb-4">
+              <strong>Sample:</strong> {sampleAnswer.substring(0, 150)}...
+            </div>
+          )}
+
           <textarea
-            rows={type === "10m" ? 8 : 4}
-            className="w-full border p-2 rounded"
-            value={responses[id] || ""}
-            onChange={(e) => handleChange(id, e.target.value)}
+            rows={marks >= 10 ? 10 : 6}
+            className="w-full border p-3 rounded mb-3"
+            value={responses[id] || ''}
+            onChange={e => handleChange(id, e.target.value)}
           />
+
           <button
-            onClick={() => evaluateResponse(id, type)}
-            className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+            onClick={() => handleFeedback(id, marks, sampleAnswer)}
+            className={`${brand.button} text-white px-4 py-2 rounded`}
           >
             Check Feedback
           </button>
+
           {feedback[id] && (
-            <div className="mt-2 text-sm bg-yellow-100 border-l-4 border-yellow-400 p-2 whitespace-pre-line">
+            <div className="mt-4 bg-yellow-50 p-3 rounded border border-yellow-300 text-sm whitespace-pre-line">
               {feedback[id]}
             </div>
           )}

@@ -1,19 +1,18 @@
-// src/App.jsx
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import LoginForm from './LoginForm.jsx';
-import CaseStudyDashboard from './CaseStudyDashboard.jsx';
-import CaseStudyPage from './CaseStudyPage.jsx';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import HomePage from './HomePage';
+import CaseStudyPage from './CaseStudyPage';
+import AdminPanel from './AdminPanel';
 
 function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
-        <Route path="/" element={<LoginForm />} />
-        <Route path="/firestore-admin" element={<CaseStudyDashboard />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/case/:id" element={<CaseStudyPage />} />
+        <Route path="/admin" element={<AdminPanel />} />
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
 

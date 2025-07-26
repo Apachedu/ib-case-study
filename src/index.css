@@ -16,7 +16,7 @@ code {
     monospace;
 }
 
-/* Custom Styles */
+/* Custom Styles for previous layout */
 
 .app {
   @apply p-5 bg-gray-100 font-sans;
@@ -61,4 +61,26 @@ button:hover {
 .filter-bar input,
 .filter-bar select {
   @apply p-2 text-base;
+}
+
+/* Additional custom styles for brand themed layout */
+
+.brand-button {
+  @apply bg-brandBlue DEFAULT text-white font-semibold px-6 py-3 rounded hover:bg-brandBlue dark transition;
+}
+
+.brand-textarea {
+  @apply w-full border border-brandGray DEFAULT rounded p-3 resize-y text-lg;
+}
+
+.brand-title {
+  @apply text-4xl font-extrabold text-brandBlue DEFAULT mb-8;
+}
+
+.brand-section-header {
+  @apply text-2xl font-semibold mb-4 text-brandBlue DEFAULT;
+}
+
+.brand-list-item {
+  @apply list-disc list-inside space-y-2 text-brandGray light text-lg;
 }

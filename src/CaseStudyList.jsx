@@ -1,20 +1,22 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { caseStudies } from './caseStudies';
 
-const CaseStudyList = ({ caseStudies, onSelect }) => {
+const CaseStudyList = () => {
   return (
-    <div className="bg-white shadow rounded p-6 max-w-4xl mx-auto">
-      <h3 className="text-2xl font-semibold mb-4">Available Case Studies</h3>
-      <ul className="divide-y divide-gray-200">
-        {caseStudies.map((study) => (
-          <li
-            key={study.id}
-            onClick={() => onSelect(study)}
-            className="cursor-pointer py-3 hover:bg-blue-50 rounded px-3 transition"
-          >
-            <strong className="text-lg">{study.title}</strong>
-            <p className="text-gray-600">
-              {study.topic} — <span className="font-medium">{study.level}</span>
-            </p>
+    <div className="max-w-6xl mx-auto px-6 py-10 text-gray-800">
+      <h1 className="text-4xl font-bold text-blue-700 mb-8">IB Business Case Studies</h1>
+
+      <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {caseStudies.map(cs => (
+          <li key={cs.id} className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition">
+            <Link to={`/case/${cs.id}`}>
+              <h2 className="text-xl font-semibold text-blue-700 hover:underline">{cs.title}</h2>
+              <p className="text-sm text-gray-500">{cs.topic} — <em>{cs.level}</em></p>
+              <p className="mt-2 text-gray-600 text-sm line-clamp-3">
+                {cs.caseText.substring(0, 100)}...
+              </p>
+            </Link>
           </li>
         ))}
       </ul>
